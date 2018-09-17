@@ -60,35 +60,36 @@ class ViewController: UIViewController {
         flipCountLabel.text = "Flips: \(game.flipCount)"
     }
     
-    private typealias theme = (emojiChoices: [String], backgroundColor: UIColor, cardBackColor: UIColor)
+    private typealias theme = (emojiChoices: String, backgroundColor: UIColor, cardBackColor: UIColor)
     
     private var emojiThemes: [String: theme] = [
-    "Halloween":(["🦇","😱","🙀","😈","🎃","👻","🍭","🍬","🍎","💀"],#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1),#colorLiteral(red: 1, green: 0.5781051517, blue: 0, alpha: 1)),
-    "Animals":(["🦓","🦍","🦒","🐅","🐫","🦏","🐘","🐕","🐈","🐄"],#colorLiteral(red: 0, green: 0.5628422499, blue: 0.3188166618, alpha: 1),#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)),
-    "Travel":(["🚒","🚓","🚑","🚗","🚕","🚌","🚚","🏍","✈️","🚤"],#colorLiteral(red: 0.5741485357, green: 0.5741624236, blue: 0.574154973, alpha: 1),#colorLiteral(red: 0.9994240403, green: 0.9855536819, blue: 0, alpha: 1)),
-    "Ocean":(["🐋","🐙","🐬","🦀","🦈","🦑","🐠","🐡","🦐","🐟"],#colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1),#colorLiteral(red: 0.4500938654, green: 0.9813225865, blue: 0.4743030667, alpha: 1))
+    "Halloween":("🦇😱🙀😈🎃👻🍭🍬🍎💀",#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1),#colorLiteral(red: 1, green: 0.5781051517, blue: 0, alpha: 1)),
+    "Animals":("🦓🦍🦒🐅🐫🦏🐘🐕🐈🐄",#colorLiteral(red: 0, green: 0.5628422499, blue: 0.3188166618, alpha: 1),#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)),
+    "Travel":("🚒🚓🚑🚗🚕🚌🚚🏍✈️🚤",#colorLiteral(red: 0.5741485357, green: 0.5741624236, blue: 0.574154973, alpha: 1),#colorLiteral(red: 0.9994240403, green: 0.9855536819, blue: 0, alpha: 1)),
+    "Ocean":("🐋🐙🐬🦀🦈🦑🐠🐡🦐🐟",#colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1),#colorLiteral(red: 0.4500938654, green: 0.9813225865, blue: 0.4743030667, alpha: 1))
     ]
     
     private var keys: [String] {return Array(emojiThemes.keys)}
-    private var emojiChoices = [String]()
+    private var emojiChoices = ""
     private var backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
     private var cardBackColor = #colorLiteral(red: 1, green: 0.5781051517, blue: 0, alpha: 1)
     
-    private var emoji = [Int:String]()
+    private var emoji = [Card:String]()
     
     private var indexTheme = 0 {
         didSet {
-            emoji = [Int:String]()
-            (emojiChoices,backgroundColor, cardBackColor) = emojiThemes[keys[indexTheme]] ?? ([], .black,.orange)
+            emoji = [Card:String]()
+            (emojiChoices,backgroundColor, cardBackColor) = emojiThemes[keys[indexTheme]] ?? ("", .black,.orange)
             updateUI()
         }
     }
     
     private func emoji(for card: Card) -> String {
-        if emoji[card.identifier] == nil, emojiChoices.count > 0 {
-            emoji[card.identifier] = emojiChoices.remove(at: emojiChoices.count.arc4random)
+        if emoji[card] == nil, emojiChoices.count > 0 {
+            let randomStringIndex = emojiChoices.index(emojiChoices.startIndex, offsetBy: emojiChoices.count.arc4random)
+            emoji[card] = String(emojiChoices.remove(at: randomStringIndex))
         }
-        return emoji[card.identifier] ?? "?"
+        return emoji[card] ?? "?"
     }
     
     private func updateUI() {

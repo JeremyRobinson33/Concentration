@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Concentration {
+struct Concentration {
     private(set) var cards = [Card]()
     
     private(set) var flipCount = 0
@@ -18,17 +18,7 @@ class Concentration {
     
     private var indexOfOneAndOnlyFaceUpCard: Int? {
         get {
-            var foundIndex: Int?
-            for index in cards.indices {
-                if cards[index].isFaceUp {
-                    if foundIndex == nil {
-                        foundIndex = index
-                    } else {
-                        return nil
-                    }
-                }
-            }
-            return foundIndex
+            return cards.indices.filter { cards[$0].isFaceUp}.oneAndOnly
         }
         set {
             for index in cards.indices {
@@ -37,7 +27,7 @@ class Concentration {
         }
     }
     
-    func chooseCard(at index: Int) {
+    mutating func chooseCard(at index: Int) {
         assert(cards.indices.contains(index),"Concentration.chooseCard(at: \(index)): chosen index not in the cards")
         if !cards[index].isMatched {
             flipCount += 1
@@ -48,7 +38,7 @@ class Concentration {
             }
             if let matchIndex = indexOfOneAndOnlyFaceUpCard, matchIndex != index {
                 // check if cards match
-                if cards[matchIndex].identifier == cards[index].identifier {
+                if cards[matchIndex] == cards[index] {
                     cards[matchIndex].isMatched = true
                     cards[index].isMatched = true
                     let cardChosenTimer = Date.init()
@@ -77,7 +67,7 @@ class Concentration {
         cards.shuffle()
     }
     
-    func newGame() {
+    mutating func newGame() {
         flipCount = 0
         score = 0
         for index in cards.indices {
@@ -95,5 +85,11 @@ extension Array {
         for index in 0..<self.count {
             self.swapAt(index, self.count.arc4random)
         }
+    }
+}
+
+extension Collection {
+    var oneAndOnly: Element? {
+        return count == 1 ? first : nil
     }
 }
